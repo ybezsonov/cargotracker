@@ -7,7 +7,8 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
-import jakarta.ejb.Stateless;
+// import jakarta.ejb.Stateless;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.WebTarget;
@@ -29,7 +30,8 @@ import org.eclipse.pathfinder.api.TransitPath;
  * domain model and the API put forward by the routing team, which operates in a different context
  * from us.
  */
-@Stateless
+// @Stateless
+@ApplicationScoped
 public class ExternalRoutingService implements RoutingService {
 
   @Inject private Logger logger;

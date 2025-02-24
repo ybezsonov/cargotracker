@@ -5,8 +5,8 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.eclipse.ee4j</groupId>
   <artifactId>cargo-tracker</artifactId>
-  <version>3.1-SNAPSHOT</version>
-  <packaging>war</packaging>
+  <version>3.21-SNAPSHOT</version>
+  <packaging>${packaging.type}</packaging>
   <name>Eclipse Cargo Tracker</name>
   <description>The project demonstrates how you can develop applications with the Jakarta EE platform using widely adopted architectural best practices like Domain-Driven Design (DDD).</description>
   <url>https://eclipse-ee4j.github.io/cargotracker/</url>
@@ -19,10 +19,14 @@
     <url>https://github.com/eclipse-ee4j/cargotracker/issues</url>
   </issueManagement>
   <properties>
+    <java.version>21</java.version>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
+    <maven.compiler.release>21</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.report.sourceEncoding>UTF-8</project.report.sourceEncoding>
-    <maven.compiler.release>11</maven.compiler.release>
     <jakartaee-api.version>10.0.0</jakartaee-api.version>
+    <packaging.type>war</packaging.type>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -32,35 +36,30 @@
       <dependency>
         <groupId>org.jboss.arquillian</groupId>
         <artifactId>arquillian-bom</artifactId>
-        <version>1.7.1.Final</version>
+        <version>1.9.3.Final</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.10.0</version>
+        <version>5.12.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
   <dependencies>
-    <dependency>
-      <groupId>jakarta.platform</groupId>
-      <artifactId>jakarta.jakartaee-api</artifactId>
-      <version>${jakartaee-api.version}</version>
-      <scope>provided</scope>
-    </dependency>
     <!-- The third-party dependencies this application has -->
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
+      <version>3.17.0</version>
     </dependency>
     <dependency>
       <groupId>org.primefaces</groupId>
       <artifactId>primefaces</artifactId>
-      <version>12.0.0</version>
+      <version>15.0.0</version>
       <classifier>jakarta</classifier>
     </dependency>
     <!-- Test dependencies -->
@@ -72,13 +71,13 @@
     <dependency>
       <groupId>org.hamcrest</groupId>
       <artifactId>hamcrest</artifactId>
-      <version>2.2</version>
+      <version>3.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>3.24.2</version>
+      <version>3.27.3</version>
       <scope>test</scope>
     </dependency>
     <!-- Arquillian dependencies -->
@@ -92,18 +91,20 @@
     <dependency>
       <groupId>org.jboss.shrinkwrap.resolver</groupId>
       <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-      <version>3.1.4</version>
+      <version>3.3.3</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.protocol</groupId>
       <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
+      <version>10.0.0.Final</version>
       <scope>test</scope>
     </dependency>
     <!-- Needed for Arquillian to log -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
+      <version>2.0.16</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -113,7 +114,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.11.0</version>
+        <version>3.14.0</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -139,7 +140,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <payara.version>6.2024.6</payara.version>
+        <payara.version>6.2025.2</payara.version>
         <!-- Application properties -->
         <webapp.graphTraversalUrl>http://localhost:8080/cargo-tracker/rest/graph-traversal/shortest-path</webapp.graphTraversalUrl>
         <db.driverClass>org.h2.jdbcx.JdbcDataSource</db.driverClass>
@@ -150,18 +151,24 @@
         <db.password />
       </properties>
       <dependencies>
+        <dependency>
+          <groupId>jakarta.platform</groupId>
+          <artifactId>jakarta.jakartaee-api</artifactId>
+          <version>${jakartaee-api.version}</version>
+          <scope>provided</scope>
+        </dependency>
         <!-- We need a Jersey specific dependency for property name constants -->
         <dependency>
           <groupId>org.glassfish.jersey.core</groupId>
           <artifactId>jersey-server</artifactId>
-          <version>3.1.2</version>
+          <version>3.1.10</version>
           <scope>provided</scope>
         </dependency>
         <!-- Embedding the JDBC driver in the WAR works in Payara -->
         <dependency>
           <groupId>com.h2database</groupId>
           <artifactId>h2</artifactId>
-          <version>2.2.224</version>
+          <version>2.3.232</version>
           <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -174,28 +181,28 @@
         <dependency>
           <groupId>fish.payara.arquillian</groupId>
           <artifactId>arquillian-payara-micro-managed</artifactId>
-          <version>3.0.alpha8</version>
+          <version>3.1</version>
           <scope>test</scope>
         </dependency>
         <!-- Needed at the moment for Jakarta EE 10 support -->
-        <dependency>
+        <!-- <dependency>
           <groupId>fish.payara.arquillian</groupId>
           <artifactId>payara-client-ee9</artifactId>
-          <version>3.0.alpha8</version>
+          <version>3.1</version>
           <scope>test</scope>
-        </dependency>        
+        </dependency> -->
       </dependencies>
       <build>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-            <version>3.1.2</version>
+            <version>3.5.2</version>
           </plugin>
           <plugin>
             <groupId>org.codehaus.cargo</groupId>
             <artifactId>cargo-maven3-plugin</artifactId>
-            <version>1.10.9</version>
+            <version>1.10.17</version>
             <configuration>
               <container>
                 <containerId>payara</containerId>
@@ -214,7 +221,7 @@
     <profile>
       <id>glassfish</id>
       <properties>
-       <glassfish.version>7.0.15</glassfish.version>
+       <glassfish.version>7.0.22</glassfish.version>
         <!-- Application properties -->
         <webapp.graphTraversalUrl>http://localhost:8080/cargo-tracker/rest/graph-traversal/shortest-path</webapp.graphTraversalUrl>
         <db.driverClass>org.h2.jdbcx.JdbcDataSource</db.driverClass>
@@ -224,19 +231,45 @@
         <db.user />
         <db.password />
       </properties>
+      <dependencyManagement>
+        <dependencies>
+          <!-- Arquillian Bill Of Management used to reduce collision between testing
+          dependencies. Using a dependency manager we don't need to specify the version of
+          each Arquillian dependency. -->
+          <dependency>
+            <groupId>org.jboss.arquillian</groupId>
+            <artifactId>arquillian-bom</artifactId>
+            <version>1.7.1.Final</version>
+            <scope>import</scope>
+            <type>pom</type>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
       <dependencies>
+        <dependency>
+          <groupId>jakarta.platform</groupId>
+          <artifactId>jakarta.jakartaee-api</artifactId>
+          <version>${jakartaee-api.version}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.shrinkwrap.resolver</groupId>
+          <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+          <version>3.1.4</version>
+          <scope>test</scope>
+        </dependency>
         <!-- We need a Jersey specific dependency for property name constants -->
         <dependency>
           <groupId>org.glassfish.jersey.core</groupId>
           <artifactId>jersey-server</artifactId>
-          <version>3.1.2</version>
+          <version>3.1.10</version>
           <scope>provided</scope>
         </dependency>
         <!-- Embedding the JDBC driver in the WAR works in GlassFish -->
         <dependency>
           <groupId>com.h2database</groupId>
           <artifactId>h2</artifactId>
-          <version>2.2.224</version>
+          <version>2.3.232</version>
           <scope>runtime</scope>
         </dependency>
 
@@ -262,7 +295,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-            <version>3.1.2</version>
+            <version>3.5.2</version>
             <configuration>
               <systemPropertyVariables>
                 <arquillian.launch>glassfish</arquillian.launch>
@@ -275,7 +308,7 @@
           <plugin>
             <groupId>org.codehaus.cargo</groupId>
             <artifactId>cargo-maven3-plugin</artifactId>
-            <version>1.10.9</version>
+            <version>1.10.17</version>
             <configuration>
               <container>
                 <containerId>glassfish7x</containerId>
@@ -292,7 +325,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-dependency-plugin</artifactId>
-            <version>3.6.0</version>
+            <version>3.8.1</version>
             <executions>
               <execution>
                 <id>unpack</id>
@@ -343,7 +376,7 @@
         <activeByDefault>false</activeByDefault>
       </activation>
       <properties>
-        <payara.version>6.2024.6</payara.version>
+        <payara.version>6.2025.2</payara.version>
         <webapp.graphTraversalUrl>http://localhost:8080/rest/graph-traversal/shortest-path</webapp.graphTraversalUrl>
         <db.driverClass>org.postgresql.ds.PGPoolingDataSource</db.driverClass>
         <!-- Pass in via command line. For example:
@@ -354,18 +387,24 @@
         <db.password>${postgreSqlPassword}</db.password>
       </properties>
       <dependencies>
+        <dependency>
+          <groupId>jakarta.platform</groupId>
+          <artifactId>jakarta.jakartaee-api</artifactId>
+          <version>${jakartaee-api.version}</version>
+          <scope>provided</scope>
+        </dependency>
         <!-- We need a Jersey specific dependency -->
         <dependency>
           <groupId>org.glassfish.jersey.core</groupId>
           <artifactId>jersey-server</artifactId>
-          <version>3.1.2</version>
+          <version>3.1.10</version>
           <scope>provided</scope>
         </dependency>
         <!-- Embedding the JDBC driver in the WAR works in Payara Micro -->
         <dependency>
           <groupId>com.h2database</groupId>
           <artifactId>h2</artifactId>
-          <version>2.2.224</version>
+          <version>2.3.232</version>
           <scope>test</scope>
         </dependency>
         <dependency>
@@ -392,7 +431,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-dependency-plugin</artifactId>
-            <version>3.6.0</version>
+            <version>3.8.1</version>
             <executions>
               <execution>
                 <id>copy</id>
@@ -407,7 +446,7 @@
                 <artifactItem>
                   <groupId>org.postgresql</groupId>
                   <artifactId>postgresql</artifactId>
-                  <version>42.6.0</version>
+                  <version>42.7.5</version>
                   <overWrite>true</overWrite>
                   <outputDirectory>${project.build.directory}</outputDirectory>
                   <destFileName>postgresql.jar</destFileName>
@@ -418,7 +457,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-            <version>3.1.2</version>
+            <version>3.5.2</version>
           </plugin>
         </plugins>
       </build>
@@ -435,17 +474,23 @@
         <db.jdbcUrl>jdbc:hsqldb:file:./cargo-tracker-data/cargo-tracker-database;create=true</db.jdbcUrl>
       </properties>
       <dependencies>
+        <dependency>
+          <groupId>jakarta.platform</groupId>
+          <artifactId>jakarta.jakartaee-api</artifactId>
+          <version>${jakartaee-api.version}</version>
+          <scope>provided</scope>
+        </dependency>
         <!-- Provided dependencies -->
         <dependency>
           <groupId>org.hsqldb</groupId>
           <artifactId>hsqldb</artifactId>
-          <version>2.7.2</version>
+          <version>2.7.4</version>
           <scope>provided</scope>
         </dependency>
         <dependency>
           <groupId>org.glassfish.jersey.core</groupId>
           <artifactId>jersey-server</artifactId>
-          <version>3.1.2</version>
+          <version>3.1.10</version>
           <scope>provided</scope>
         </dependency>
         <dependency>
@@ -463,7 +508,7 @@
           <plugin>
             <groupId>io.openliberty.tools</groupId>
             <artifactId>liberty-maven-plugin</artifactId>
-            <version>3.8.2</version>
+            <version>3.11.2</version>
             <configuration>
               <copyDependencies>
                 <dependencyGroup>
@@ -489,12 +534,156 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-            <version>3.1.2</version>
+            <version>3.5.2</version>
             <configuration>
               <systemPropertyVariables>
                 <arquillian.launch>openliberty</arquillian.launch>
               </systemPropertyVariables>
             </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>quarkus</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <myfaces.version>4.1.0</myfaces.version>
+        <primefaces-quarkus.version>3.15.0</primefaces-quarkus.version>
+        <quarkus.version>3.18.4</quarkus.version>
+        <artemis.version>2.39.0</artemis.version>
+        <quarkus-artemis.version>3.6.4</quarkus-artemis.version>
+        <packaging.type>jar</packaging.type>
+        <skipITs>true</skipITs>
+      </properties>
+      <dependencyManagement>
+        <dependencies>
+          <dependency>
+            <groupId>io.quarkus.platform</groupId>
+            <artifactId>quarkus-bom</artifactId>
+            <version>${quarkus.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>artemis-bom</artifactId>
+            <version>${artemis.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+          </dependency>
+          <dependency>
+            <groupId>io.quarkiverse.artemis</groupId>
+            <artifactId>quarkus-artemis-bom</artifactId>
+            <version>${quarkus-artemis.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
+      <dependencies>
+        <!-- Faces -->
+        <!-- https://github.com/melloware/quarkus-faces -->
+        <dependency>
+            <groupId>org.apache.myfaces.core.extensions.quarkus</groupId>
+            <artifactId>myfaces-quarkus</artifactId>
+            <version>${myfaces.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkiverse.primefaces</groupId>
+            <artifactId>quarkus-primefaces</artifactId>
+            <version>${primefaces-quarkus.version}</version>
+        </dependency>
+        <!-- REST -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-rest-jackson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-rest-client-jackson</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-arc</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>io.quarkus</groupId>
+          <artifactId>quarkus-undertow</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jsonb</artifactId>
+        </dependency>
+        <!-- DB -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-hibernate-orm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jdbc-postgresql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-narayana-jta</artifactId>
+        </dependency>
+        <!-- Artemis JMS -->
+        <dependency>
+            <groupId>io.quarkiverse.artemis</groupId>
+            <artifactId>quarkus-artemis-jms</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkiverse.artemis</groupId>
+            <artifactId>quarkus-test-artemis</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>io.quarkiverse.jberet</groupId>
+          <artifactId>quarkus-jberet</artifactId>
+          <version>2.5.0</version>
+        </dependency>
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-test-common</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <scope>test</scope>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-maven-plugin</artifactId>
+            <version>${quarkus.version}</version>
+            <extensions>true</extensions>
+            <executions>
+              <execution>
+                <goals>
+                <goal>build</goal>
+                <goal>generate-code</goal>
+                <goal>generate-code-tests</goal>
+                </goals>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>

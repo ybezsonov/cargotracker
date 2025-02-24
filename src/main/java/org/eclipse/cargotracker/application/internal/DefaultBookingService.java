@@ -5,7 +5,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jakarta.ejb.Stateless;
+// import jakarta.ejb.Stateless;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 import jakarta.inject.Inject;
 import org.eclipse.cargotracker.application.BookingService;
 import org.eclipse.cargotracker.domain.model.cargo.Cargo;
@@ -18,7 +20,8 @@ import org.eclipse.cargotracker.domain.model.location.LocationRepository;
 import org.eclipse.cargotracker.domain.model.location.UnLocode;
 import org.eclipse.cargotracker.domain.service.RoutingService;
 
-@Stateless
+//@Stateless
+@ApplicationScoped
 public class DefaultBookingService implements BookingService {
 
   @Inject private CargoRepository cargoRepository;
@@ -27,6 +30,7 @@ public class DefaultBookingService implements BookingService {
   @Inject private Logger logger;
 
   @Override
+  @Transactional
   public TrackingId bookNewCargo(
       UnLocode originUnLocode, UnLocode destinationUnLocode, LocalDate arrivalDeadline) {
     TrackingId trackingId = cargoRepository.nextTrackingId();
@@ -56,6 +60,7 @@ public class DefaultBookingService implements BookingService {
   }
 
   @Override
+  @Transactional
   public void assignCargoToRoute(Itinerary itinerary, TrackingId trackingId) {
     Cargo cargo = cargoRepository.find(trackingId);
 
@@ -66,6 +71,7 @@ public class DefaultBookingService implements BookingService {
   }
 
   @Override
+  @Transactional
   public void changeDestination(TrackingId trackingId, UnLocode unLocode) {
     Cargo cargo = cargoRepository.find(trackingId);
     Location newDestination = locationRepository.find(unLocode);
@@ -84,6 +90,7 @@ public class DefaultBookingService implements BookingService {
   }
 
   @Override
+  @Transactional
   public void changeDeadline(TrackingId trackingId, LocalDate newDeadline) {
     Cargo cargo = cargoRepository.find(trackingId);
 

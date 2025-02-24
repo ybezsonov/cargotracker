@@ -1,0 +1,73 @@
+package org.eclipse.cargotracker.infrastructure.messaging.jms;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
+import jakarta.inject.Inject;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSConsumer;
+import jakarta.jms.JMSContext;
+import jakarta.jms.JMSException;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Message;
+import jakarta.jms.ObjectMessage;
+import org.eclipse.cargotracker.application.ApplicationEvents;
+import org.eclipse.cargotracker.application.HandlingEventService;
+import org.eclipse.cargotracker.domain.model.cargo.Cargo;
+import org.eclipse.cargotracker.domain.model.handling.CannotCreateHandlingEventException;
+import org.eclipse.cargotracker.domain.model.handling.HandlingEvent;
+import org.eclipse.cargotracker.interfaces.handling.HandlingEventRegistrationAttempt;
+
+import io.quarkus.runtime.ShutdownEvent;
+import io.quarkus.runtime.StartupEvent;
+
+// https://quarkus.io/guides/jms
+@ApplicationScoped
+public class HandlingEventRegistrationAttemptConsumer implements Runnable {
+  @Inject private Logger logger;
+
+  @Inject ConnectionFactory connectionFactory;
+  private JMSContext jmsContext;
+  private final ExecutorService scheduler = Executors.newSingleThreadExecutor();
+
+  void onStart(@Observes StartupEvent ev) {
+    scheduler.submit(this);
+  }
+
+  void onStop(@Observes ShutdownEvent ev) {
+    scheduler.shutdown();
+  }
+
+  private Destination handlingEventQueue;
+  private HandlingEventService handlingEventService;
+
+  @Override
+  public void run() {
+    jmsContext = connectionFactory.createContext();
+    handlingEventQueue = jmsContext.createQueue("HandlingEventRegistrationAttemptQueue");
+    JMSConsumer consumer = jmsContext.createConsumer(handlingEventQueue);
+    while (true) {
+      Message message = consumer.receive();
+      if (message == null) return;
+      logger.log(Level.INFO, "Processing handling event registration attempt. Message {0}", message);
+      try {
+        ObjectMessage objectMessage = (ObjectMessage) message;
+        HandlingEventRegistrationAttempt attempt =
+          (HandlingEventRegistrationAttempt) objectMessage.getObject();
+          logger.log(Level.INFO, "Processing handling event registration attempt {0}", attempt);
+        handlingEventService.registerHandlingEvent(
+          attempt.getCompletionTime(),
+          attempt.getTrackingId(),
+          attempt.getVoyageNumber(),
+          attempt.getUnLocode(),
+          attempt.getType());
+      } catch (JMSException | CannotCreateHandlingEventException e) {
+        throw new RuntimeException("Error occurred processing message", e);
+      }
+    }
+  }
+}
