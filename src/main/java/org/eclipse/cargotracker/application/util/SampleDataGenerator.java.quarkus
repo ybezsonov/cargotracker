@@ -5,8 +5,13 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.logging.Logger;
 import jakarta.annotation.PostConstruct;
+// import jakarta.annotation.Priority;
+// import jakarta.ejb.Singleton;
+// import jakarta.ejb.Startup;
+import jakarta.inject.Singleton;
 import io.quarkus.runtime.Startup;
 import jakarta.transaction.Transactional;
+import io.quarkus.runtime.LaunchMode;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
@@ -28,7 +33,8 @@ import org.eclipse.cargotracker.domain.model.location.SampleLocations;
 import org.eclipse.cargotracker.domain.model.voyage.SampleVoyages;
 
 /** Loads sample data for demo. */
-@Startup
+@Singleton
+@Startup(1)
 public class SampleDataGenerator {
 
   @Inject private Logger logger;
@@ -41,10 +47,13 @@ public class SampleDataGenerator {
   @TransactionAttribute(TransactionAttributeType.REQUIRED)
   public void loadSampleData() {
     // if (!isSampleLoaded()) {
+    logger.info("The application is starting with profile " + LaunchMode.current());
+    if (LaunchMode.current() != LaunchMode.TEST) {
       logger.info("Loading sample data.");
       loadSampleLocations();
       loadSampleVoyages();
       loadSampleCargos();
+    }
     // } else {
     //   logger.info("Sample data already loaded, skipping.");
     // }

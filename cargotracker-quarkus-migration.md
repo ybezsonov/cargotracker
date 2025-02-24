@@ -6,9 +6,6 @@ cd cargotracker
 
 ## Change JakartaEE application to be more compatible with Quarkus and be able to run on JakartaEE servers
 
-- `src/main/java/org/eclipse/cargotracker/application/util/RestConfiguration.java`
-    - comment out // import org.glassfish.jersey.server.ServerProperties; and related code
-
 - `src/main/java/org/eclipse/cargotracker/application/internal/DefaultBookingService.java`
     - change //@Stateless to @ApplicationScoped
     - import jakarta.enterprise.context.ApplicationScoped;
@@ -63,7 +60,7 @@ cp src/main/java/org/eclipse/cargotracker/application/util/SampleDataGenerator.j
 ## Start EE AppServers
 
 ```bash
-scripts/prepare4ee.sh
+./scripts/prepare4ee.sh
 
 # Default Payara
 mvn clean package cargo:run
@@ -78,7 +75,7 @@ mvn clean package -Popenliberty liberty:run
 ## Start Quarkus Dev mode
 
 ```bash
-scripts/prepare4quarkus.sh
+./scripts/prepare4quarkus.sh
 export TESTCONTAINERS_RYUK_DISABLED=true
 mvn clean package -P quarkus
 mvn quarkus:dev -P quarkus
@@ -87,7 +84,7 @@ mvn quarkus:dev -P quarkus
 ## Start Quarkus docker-compose
 
 ```bash
-scripts/prepare4quarkus.sh
+./scripts/prepare4quarkus.sh
 docker build -t cargotracker:latest -f Dockerfile.quarkus --progress=plain .
 docker compose up --force-recreate && docker rm $(docker ps -a | grep "cargotracker" | awk '{print $1}')
 ```
@@ -95,7 +92,7 @@ docker compose up --force-recreate && docker rm $(docker ps -a | grep "cargotrac
 ## Start Quarkus native build
 
 ```bash
-scripts/prepare4quarkus.sh
+./scripts/prepare4quarkus.sh
 docker build -t cargotracker:latest -f Dockerfile.native --progress=plain .
 docker compose up --force-recreate && docker rm $(docker ps -a | grep "cargotracker" | awk '{print $1}')
 ```
