@@ -44,18 +44,15 @@ cp src/main/resources/META-INF/resources/WEB-INF/web.xml src/main/resources/META
 
 ## Add `src/main/resources/application.properties`
 
-## Create Quarkus implementation for JMS
+## Create Quarkus implementation for some modules
 
-```bash
-cp src/main/java/org/eclipse/cargotracker/infrastructure/messaging/jms/JmsApplicationEvents.java.quarkus src/main/java/org/eclipse/cargotracker/infrastructure/messaging/jms/JmsApplicationEvents.java
-cp src/main/java/org/eclipse/cargotracker/infrastructure/messaging/jms/HandlingEventRegistrationAttemptConsumer.java.quarkus src/main/java/org/eclipse/cargotracker/infrastructure/messaging/jms/HandlingEventRegistrationAttemptConsumer.java
-```
+- src/main/java/org/eclipse/cargotracker/application/util/SampleDataGenerator.java
+- src/main/java/org/eclipse/cargotracker/application/util/RestConfiguration.java
+- src/main/java/org/eclipse/cargotracker/infrastructure/messaging/jms/JmsApplicationEvents.java
+- src/main/java/org/eclipse/cargotracker/infrastructure/messaging/jms/HandlingEventRegistrationAttemptConsumer.java
+- src/test/java/org/eclipse/cargotracker/application/BookingServiceTestDataGenerator.java
+- src/test/java/org/eclipse/cargotracker/application/BookingServiceTest.java
 
-## Update SampleDataGenerator
-
-```bash
-cp src/main/java/org/eclipse/cargotracker/application/util/SampleDataGenerator.java.quarkus src/main/java/org/eclipse/cargotracker/application/util/SampleDataGenerator.java
-```
 
 ## Start EE AppServers
 
